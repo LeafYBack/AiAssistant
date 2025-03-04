@@ -1,23 +1,19 @@
-import requests
+# Please install OpenAI SDK first: `pip3 install openai`
 
-DEEPSEEK_API_URL = "https://api.deepseek.ai/v1/analyze"  # 替换为实际 DeepSeek API URL
-DEEPSEEK_API_KEY = "YOUR_DEEPSEEK_API_KEY"  # 替换为实际 API 密钥
+from openai import OpenAI
 
-def analyze_text(text):
-    # 调用 DeepSeek API 进行文本分析
-    headers = {
-        "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
-        "Content-Type": "application/json"
-    }
+client = OpenAI(api_key="sk-b0086759de82476c82563da40c1354db", base_url="https://api.deepseek.com")
 
-    data = {
-        "text": text
-    }
+#提问的问题
+text="你的数据库截止于何时"
 
-    response = requests.post(DEEPSEEK_API_URL, headers=headers, json=data)
+response = client.chat.completions.create(
+    model="deepseek-chat",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant"},
+        {"role": "user", "content": text},
+    ],
+    #stream=False
+)
 
-    if response.status_code == 200:
-        return response.json()  # 返回分析结果
-    else:
-        print(f"Error: {response.status_code}")
-        return None
+print(response.choices[0].message.content)
